@@ -6,7 +6,6 @@ Created on Sun Jan 12 13:54:14 2025
 """
 
 import numpy as np
-import matplotlib.pyplot as plt
 from numpy.random import choice
 
 #Cobstantes 
@@ -118,22 +117,3 @@ print(f"-> épargne : {total_savings:.1f} $  ({(total_savings/capital * 100):.1f
 print(f"-> en cash disponible : {balances[-1]:.1f} $")
 if (date_decuple_capital != -1):
     print(f"Capital décuplé en {date_decuple_capital} mois (ou {date_decuple_capital/12:.1f} années) !")
-
-
-# Générer les graphiques
-"""plt.figure(figsize=(10, 6))
-plt.plot(range(months_number + 1), balances, label="Balance (€)", color="blue", linewidth=2)
-plt.axhline(0, color="black", linestyle="--", linewidth=0.8)  # Ligne de référence à 0
-
-# Ajouter les revenus et dépenses pour comparaison
-plt.bar(range(months_number), income_history, label="Revenus mensuels (€)", color="green", alpha=0.5)
-plt.bar(range(months_number), [-e for e in expense_history], label="Dépenses mensuelles (€)", color="red", alpha=0.5)
-
-# Mise en forme du graphique
-plt.xlabel("Mois")
-plt.ylabel("Montant (€)")
-plt.title("Évolution de la Balance avec Revenus et Dépenses")
-plt.legend()
-plt.grid()
-plt.tight_layout()
-#plt.show()"""
