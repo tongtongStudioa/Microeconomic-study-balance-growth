@@ -12,7 +12,7 @@ from numpy.random import choice
 months = ["January","February","March","April","May","June","July","August","September","October","November", "December"]
 
 # Paramètres
-initial_balance = 500  # Solde initial (€)
+initial_balance = 1500  # Solde initial (€)
 monthly_income = 2500    # Revenu mensuel (€)
 monthly_expenses_ratio = float(input("Taux de dépenses mensuel (en %) :"))/100 # Propension marginale à consommer
 monthly_expenses = monthly_expenses_ratio * monthly_income   # Dépenses fixes mensuelles ($)
@@ -20,14 +20,14 @@ saving_ratio =  float(input("Taux d'épargne mensuel (en %) :"))/100 # (0.1 % de
 investment_ratio = float(input("Taux d'investissement mensuel (en %) :"))/100
 
 investment_return_rate = 0.05  # Taux de rendement annuel des investissements (15 % de chance de perte)
-months_number = 12 * 3           # Nombre de mois (8 ans)
+months_number = 12 * 10           # Nombre de mois (8 ans)
 
 # Simulation
 balances = [initial_balance]  # Liste pour stocker le solde à chaque mois
 income_history = []           # Historique des revenus mensuels
 expense_history = []          # Historique des dépenses mensuelles
-investments = [100]            # Historique des investissements 
-savings = [250]               # Historique de l'épargne mensuel 
+investments = [2000]            # Historique des investissements 
+savings = [25000]               # Historique de l'épargne mensuel 
 
 total_investments = investments[-1]
 total_savings = savings[-1]
