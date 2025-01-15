@@ -22,6 +22,7 @@ class BalancingSimulation:
         
     def analyse_simulations(self):
         #todo : tests multiple scenarios to compare investment ratio and saving ratio etc
+        
         return
 class BankAccount:
     """ Create life bank account for particular personn with all parameters you want."""
@@ -36,10 +37,18 @@ class BankAccount:
         self.monthly_expenses = self.monthly_expenses_ratio * self.monthly_income   # Dépenses fixes mensuelles ($)
         self.saving_ratio = 0.2
         self.investment_ratio = 0.3
+        self.investment_return_rate = 0.05
+        self.saving_return_rate = 0.025
+        self.expense_uncertainty = 0.2
+        self.income_uncertainty = 0.05
+        self.saving_loss_prob = 0.01
+        self.investment_loss_prob = 0.15
+        
         self.init_user_param = False
         self.init_bank_account()
         
     def init_manual_parameters(self):
+        """ Initiate parameters directly from the user."""
         monthly_expenses_ratio = float(input("Taux de dépenses mensuel (en %) :"))/100 # Propension marginale à consommer
         monthly_expenses = monthly_expenses_ratio *self.monthly_income   # Dépenses fixes mensuelles ($)
         saving_ratio =  float(input("Taux d'épargne mensuel (en %) :"))/100 # (0.1 % de chance de perte)
@@ -71,11 +80,11 @@ class BankAccount:
         self.capital = self.total_investments + self.total_savings + self.balances[-1]
         self.wealthy_financial_assets = -1
         
-    def n_months_simulations(self,months_n,investment_return_rate = 0.05,saving_return_rate = 0.025, expense_uncertainty = 0.2, income_uncertainty = 0.05,saving_loss_prob = 0.01,investment_loss_prob = 0.15):
-        """Simulation for a number of months"""
+    def n_months_simulations(self,months_n):
+        """Simulate living situation for a number of months."""
                 
         for i in range(months_n):
-            self.month_simulation(i, investment_return_rate,saving_return_rate, expense_uncertainty, income_uncertainty,saving_loss_prob,investment_loss_prob)
+            self.month_simulation(i)
             
             # Suivre la progression du capital
             if (self.capital >= 3000000 and self.wealthy_financial_assets == -1):
@@ -83,21 +92,21 @@ class BankAccount:
                 
         # todo : maybe return essential information !
         
-    def month_simulation(self,i, investment_return_rate,saving_return_rate, expense_uncertainty, income_uncertainty,saving_loss_prob,investment_loss_prob):
-        
+    def month_simulation(self,i):
+        """ Simulate one month of living."""
         current_balance = self.balances[-1]
         
         # Ajouter revenu et déduire dépenses
-        rate = np.random.uniform(-income_uncertainty, income_uncertainty) # Ajoute l'incertitude aux revenus et dépenses
+        rate = np.random.uniform(-self.income_uncertainty, self.income_uncertainty) # Ajoute l'incertitude aux revenus et dépenses
         income = self.monthly_income * (1 + rate)
-        rate = np.random.uniform(-expense_uncertainty, expense_uncertainty)
+        rate = np.random.uniform(-self.expense_uncertainty, self.expense_uncertainty)
         expense = self.monthly_expenses * (1 + rate)
         
         # Ajouter les gains réinvestis
         if (i >= 12 and self.investments[i-12] > 0):
-            income += self.investments[i-12] * investment_return_rate
+            income += self.investments[i-12] * self.investment_return_rate
         if (i >= 12 and self.savings[i-12] > 0):
-            income += self.savings[i-12] * saving_return_rate
+            income += self.savings[i-12] * self.saving_return_rate
             
         new_balance = current_balance + income - expense
         
@@ -113,13 +122,13 @@ class BankAccount:
         # Epargner et investir si possible
         monthly_saving = 0
         if (new_balance > 0):
-            monthly_saving = new_balance * self.saving_ratio * choice([0,1], 1, p=[saving_loss_prob ,1 - saving_loss_prob])[0] #1 % de chance de perte 
+            monthly_saving = new_balance * self.saving_ratio * choice([0,1], 1, p=[self.saving_loss_prob ,1 - self.saving_loss_prob])[0] #1 % de chance de perte 
             #print(f"Epargne mensuel : {monthly_saving:.1f} $")
             new_balance -= monthly_saving
             
         monthly_investment = 0
         if (new_balance > 0 and new_balance * self.investment_ratio > 100):
-            monthly_investment = new_balance * self.investment_ratio * choice([0,1], 1, p=[investment_loss_prob ,1 - investment_loss_prob])[0] #15 % de chance de perte 
+            monthly_investment = new_balance * self.investment_ratio * choice([0,1], 1, p=[self.investment_loss_prob ,1 - self.investment_loss_prob])[0] #15 % de chance de perte 
             new_balance -= monthly_investment
             #print(f"Investissement mensuel : {monthly_investment:.1f} $")
             #print(f"Balance after investments/savings on {months[i%12]}: {new_balance:.1f} $")
@@ -135,6 +144,10 @@ class BankAccount:
         self.capital = self.total_investments + self.total_savings + self.balances[-1]
         
     def show_simulations_infos(self,show_details, saving_return_rate, investment_return_rate):
+        """ Print in the console, informations about simulations for a number of months."""
+        
+        self.show_simulation_hypothesis()
+        
         months_n = len(self.balances)
                 
         for i in range(months_n):
@@ -167,6 +180,16 @@ class BankAccount:
         if (self.wealthy_financial_assets != -1):
             print(f"Capital de riche en {self.wealthy_financial_assets} mois (ou {self.wealthy_financial_assets/12:.1f} années) !")
     
+    def show_simulation_hypothesis(self):
+        print("\n*** Hypothesis ***")
+        print(f"Salaire mensuel : {self.monthly_income} $ (+- {self.income_uncertainty * 100}%)")
+        print(f"Dépense mensuel : {self.monthly_expenses} $ (+- {self.expense_uncertainty * 100}%)")
+        print(f"Taux de dépense mensuel : {self.monthly_expenses_ratio * 100}%")
+        print(f"Taux d'épargne mensuel : {self.saving_ratio * 100}% $ (loss probability = {self.saving_loss_prob * 100}%)")
+        print(f"Taux d'investissement mensuel : {self.investment_ratio * 100}% (loss probability = {self.investment_loss_prob * 100}%)")
+        print(f"Taux retour sur investissement annuel: {self.investment_return_rate * 100}%")
+        print(f"Taux retour sur épargne annuel: {self.saving_return_rate * 100}%\n")
+        
     def show_graph(self,months_n):
         plt.figure(figsize=(10, 6))
         plt.plot(range(months_n + 1), self.balances, label="Balance (€)", color="blue", linewidth=2)
@@ -184,3 +207,12 @@ class BankAccount:
         plt.grid()
         plt.tight_layout()
         plt.show()
+    
+    def how_long_to_be_rich(self, wealth_goal = 3000000):
+        i = 0
+        self.show_simulation_hypothesis()
+        while (self.capital < wealth_goal):
+            self.month_simulation(i)
+            i += 1
+        print(f"You are rich (wealth >= {wealth_goal} $) in {int(i/12)} years ...")
+        return i
