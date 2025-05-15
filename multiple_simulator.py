@@ -2,7 +2,7 @@
 """
 Created on Fri Mar 21 18:47:14 2025
 
-@author: La famille tong
+@author: TongtongStudioa
 """
 
 from account_modelisation import BankAccount
@@ -23,7 +23,6 @@ class MultipleBalancingSimulator:
         self.strategies = []
         self.results = []
         
-        self.generate_strategies()
         
     def define_saving_investment_ratios(self, saving_ratios, investment_ratios):
         self.saving_ratios = saving_ratios
@@ -59,13 +58,13 @@ class MultipleBalancingSimulator:
                 
     def run_simulations(self, num_runs = 20):
         """Run Monte Carlo simulations for all strategies"""
-        
+        self.generate_strategies()
         self.simulations_list = []
         #todo : tests multiple scenarios to compare investment ratio and saving ratio 
         id_simulation = 0
-        for strategy in self.strategies:
+        for new_strategy in self.strategies:
             bank_account = self.initial_bank_account
-            bank_account.define_strategy(strategy)
+            bank_account.strategy = new_strategy
             final_capitals = []
             bankruptcies = 0
             
@@ -79,8 +78,8 @@ class MultipleBalancingSimulator:
                     continue
             self.results.append(
                         {"id" : id_simulation,
-                        "saving_ratio" : strategy.saving_ratio,
-                        "investment_ratio" : strategy.investment_ratio,
+                        "saving_ratio" : new_strategy.saving_ratio,
+                        "investment_ratio" : new_strategy.investment_ratio,
                         'median_capital': np.median(final_capitals),
                         'mean_capital': np.mean(final_capitals),
                         'min_capital': np.min(final_capitals),

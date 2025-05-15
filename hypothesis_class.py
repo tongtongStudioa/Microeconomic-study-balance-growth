@@ -2,7 +2,7 @@
 """
 Created on Wed May 14 13:05:48 2025
 
-@author: Axel
+@author: TongtongStudioa
 """
 
 class EconomicHypothesis: 

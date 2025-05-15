@@ -11,7 +11,7 @@ Fonctionnalités principales :
 
 Created on Tue Jan 14 18:42:09 2025
 
-@author: Axel
+@author: TongtongStudioa
 """
 
 """
@@ -26,23 +26,23 @@ from hypothesis_class import EconomicHypothesis
 from strategy_class import Strategy
 import numpy as np
 
-hypothesis = EconomicHypothesis()
+hypothesis = EconomicHypothesis(saving_loss_prob=0.001, investment_return_rate=0.1, investment_loss_prob=0.2)
 print(hypothesis)
 base_strategy = Strategy()
 initial_account = BankAccount(hypothesis, base_strategy, initial_balance=1000, initial_saving=1200, initial_investment=500, monthly_income=2000) 
 initial_account.define_expense_ratio(0.8)
 print(initial_account)
-initial_account.simulate_for_years(5)
-initial_account.show_simulations_infos(True)
-multiple_simu = MultipleBalancingSimulator(hypothesis, initial_account, years_number= 15)
+initial_account.show_hypothesis()
+
+multiple_simu = MultipleBalancingSimulator(hypothesis, initial_account, years_number= 5)
 multiple_simu.define_saving_investment_ratios(np.linspace(0,0.4,5), np.linspace(0,0.5,6))
 
 # Run simulations (10 simulations per strategy)
-#print("Running simulations...")
-#multiple_simu.run_simulations(num_runs=50)
+print("Running simulations...")
+multiple_simu.run_simulations(num_runs=50)
 
 # Find and display top strategies
-"""top_strategies = multiple_simu.find_optimal_strategies(3, "mean_capital")
+top_strategies = multiple_simu.find_optimal_strategies(3, "mean_capital")
 print("\nTop 5 Strategies by Mean Final Capital:")
 for i, strategy in enumerate(top_strategies, 1):
     print(f"{i}. Saving: {strategy['saving_ratio']:.0%}, Investing: {strategy['investment_ratio']:.0%}")
@@ -55,7 +55,7 @@ for i, strategy in enumerate(top_strategies, 1):
 
 # Visualize results
 print("Generating visualizations...")
-multiple_simu.plot_3d_results('median_capital')
+multiple_simu.plot_3d_results('mean_capital')
 multiple_simu.plot_heatmap('median_capital')
 print("See above !")
-print("Finish !")"""
+print("Finish !")

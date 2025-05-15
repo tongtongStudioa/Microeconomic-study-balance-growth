@@ -2,7 +2,7 @@
 """
 Created on Sun Jan 12 13:54:14 2025
 
-@author: La famille tong
+@author: TongtongStudioa
 """
 
 import numpy as np
@@ -66,11 +66,6 @@ class BankAccount:
         monthly_expenses = monthly_expenses_ratio *self.monthly_income   # Dépenses fixes mensuelles ($)
         self.monthly_expenses_ratio = monthly_expenses_ratio
         self.monthly_expenses = monthly_expenses
-    
-    def define_strategy(self, strategy):
-        """ Define saving and investment strategy. """
-        self.saving_ratio = strategy.saving_ratio
-        self.investment_ratio = strategy.investment_ratio
         
     def __str__(self):
         # Afficher le captial total
@@ -83,7 +78,7 @@ class BankAccount:
     def simulate_for_years(self,years):
         """Simulate account activity and return results"""
         months_n = years * 12
-        for i in range(months_n + 1):
+        for i in range(months_n):
             self.month_simulation(i)
             if (self.bankruptcy):
                 break
@@ -98,7 +93,12 @@ class BankAccount:
     
     def month_simulation(self,i):
         """Core monthly simulation logic"""
-        
+        #print(i)
+        #if i%12 == 0:
+         #   print()
+         #   print(f"Year {i/12+1}")
+        #print()
+        #print(f"{months[int(i%12)]}")
         # Apply random variations to income and expenses
         income = self._apply_variation(
             self.monthly_income, 
@@ -109,11 +109,14 @@ class BankAccount:
             self.hypothesis.expense_uncertainty
         )
         
+        #print(f"Income before returns : {income} $")
+        #print(f"Expenses : {expense} $")
         # Add investment and savings returns from previous periods
         income += self._calculate_returns(i)
         
         # Update balance
         new_balance = self.balances[-1] + income - expense
+        #print(f"Balance : {new_balance}$")
         
         # Handle negative balance (potential bankruptcy)
         new_balance = self._handle_negative_balance(new_balance)
@@ -122,8 +125,10 @@ class BankAccount:
         
         # Allocate savings and investments
         monthly_saving, monthly_investment = self._allocate_funds(new_balance)
+
         new_balance -= (monthly_saving + monthly_investment)
-        
+        #if (monthly_saving != 0 or monthly_investment != 0):
+            #print(f"Balance after saving and invest : {new_balance} $")
         # Update account state
         self._update_account_state(
             new_balance,
@@ -142,13 +147,15 @@ class BankAccount:
         """Calculate returns from investments and savings"""
         returns = 0
         # Investments typically have annual returns
-        if current_month >= 12 and self.investments[current_month-12] > 0:
-            returns += self.investments[current_month-12] * self.hypothesis.investment_return_rate
-        
-        # Savings might have more frequent returns (here monthly for simplicity)
-        if current_month >= 1 and self.savings[current_month-1] > 0:
-            returns += self.savings[current_month-1] * (self.hypothesis.saving_return_rate / 12)
+        if current_month >= 12 and months[current_month%12] == "December" and self.total_investments > 0:
+            returns += self.total_investments * self.hypothesis.investment_return_rate
+            #print(f"Investment returns : {returns} $")
             
+        # Savings might have more frequent returns (here monthly for simplicity)
+        if current_month >= 12 and months[current_month%12] == "December" and self.total_savings > 0:
+            returns += self.total_savings * (self.hypothesis.saving_return_rate)
+            #print(f"Saving returns : {returns} $")
+
         return returns
     
     def _handle_negative_balance(self, balance: float) -> float:
@@ -179,6 +186,7 @@ class BankAccount:
              [0, 1], 
              p=[self.hypothesis.saving_loss_prob, 1-self.hypothesis.saving_loss_prob]
          )
+         #print(f"Monthly saving = {available_balance} * {self.strategy.saving_ratio} * chance = {saving_amount} $")
          
          # Investment allocation with higher risk of loss
          investment_amount = 0
@@ -188,7 +196,8 @@ class BankAccount:
                  [0, 1],
                  p=[self.hypothesis.investment_loss_prob, 1-self.hypothesis.investment_loss_prob]
              )
-             
+         #print(f"Monthly invest = {available_balance} * {self.strategy.investment_ratio} * chance = {investment_amount} $")
+
          return saving_amount, investment_amount
     
     def _update_account_state(self, balance, income, expenses, saving, investment):
