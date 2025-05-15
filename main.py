@@ -1,14 +1,5 @@
 # -*- coding: utf-8 -*-
 """
-Simulateur de Stratégies Financières Multi-Comptes avec Visualisation 3D
-
-Fonctionnalités principales :
-- Simulation de multiples comptes bancaires avec différentes stratégies d'épargne et d'investissement
-- Analyse Monte Carlo pour chaque stratégie
-- Visualisation 3D des résultats
-- Calcul de métriques de performance
-- Identification des stratégies optimales
-
 Created on Tue Jan 14 18:42:09 2025
 
 @author: TongtongStudioa
